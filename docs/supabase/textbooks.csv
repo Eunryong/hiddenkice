@@ -1,0 +1,7 @@
+id,title,textbook_type,image_url,original_price,discount_rate,price,display_order,is_active,created_at
+1,2026 Hidden Kice 국어 독서 기본서,단품,image/textbooks/textbook1.webp,28000,10,25200,1,true,2026-06-10T00:00:00+09:00
+2,2026 Hidden Kice 국어 문학 기본서,단품,image/textbooks/textbook2.webp,28000,10,25200,2,true,2026-06-10T00:00:00+09:00
+3,2026 Hidden Kice 수학 공통 실전서,단품,image/textbooks/textbook1.webp,32000,15,27200,3,true,2026-06-10T00:00:00+09:00
+4,2026 Hidden Kice 영어 독해 유형서,단품,image/textbooks/textbook2.webp,26000,10,23400,4,true,2026-06-10T00:00:00+09:00
+5,Hidden Kice 국수영 실전 패스,패스,image/textbooks/textbook1.webp,86000,25,64500,5,true,2026-06-10T00:00:00+09:00
+6,Hidden Kice 전과목 프리미엄 패스,패스,image/textbooks/textbook2.webp,148000,30,103600,6,true,2026-06-10T00:00:00+09:00
