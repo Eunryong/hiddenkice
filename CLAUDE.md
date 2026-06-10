@@ -37,7 +37,7 @@ Data flow: pages get state only through hooks (`useTextbooks`, `useTextbookBanne
 These are deliberate choices documented in `docs/DESIGN_NOTES.md` — honor them:
 
 - **Domain is `textbooks`, not `products`.** The core entity is study textbooks, not generic commerce items.
-- **`TextbookMainBanner` lives in `features/textbooks/components/`, not `components/layout/`** — it's a domain promo banner, not a global element. Banners are treated as **operational data fetched from Supabase**, not hardcoded, because operators may swap/reorder them (the Figma `1/5` page indicator implies multiple rotating banners).
+- **`MainBanner` lives in `features/textbooks/components/`, not `components/layout/`** — it's a domain promo banner, not a global element (the `features/textbooks` folder already namespaces it, so no `Textbook` prefix). Banners are treated as **operational data fetched from Supabase**, not hardcoded, because operators may swap/reorder them (the Figma `1/5` page indicator implies multiple rotating banners).
 - **`price` is read from the DB, never computed client-side.** `original_price` + `discount_rate` are display-only. Real selling price can diverge from the naive calc due to coupons/events/manual adjustments, so the stored `price` is authoritative.
 - **Figma's `1440px` fixed widths / absolute positions are references, not literals.** Reconstruct with Flex/Grid; the textbook list must be a responsive grid, not fixed coordinates.
 - **Purchase state is intentionally NOT a column on `textbooks`.** It's per-user state, modeled via a separate `user_textbook_entitlements` table (entitlements, not order history) to handle refunds/admin grants/pass expiry. Not in current scope, but don't add `is_purchased` to `textbooks`.

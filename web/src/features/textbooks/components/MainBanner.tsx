@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { storageUrl } from "@/lib/supabase/storage";
+import { storageUrl } from "@/lib/supabase";
 import type { Banner } from "../types/banner";
 
 // 교재 목록 페이지의 도메인 프로모션 배너. full-bleed(1440), 비율 1440:491 유지.

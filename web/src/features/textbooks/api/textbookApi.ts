@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase";
 import type { Textbook } from "../types/textbook";
 
 // 노출 대상 교재 목록을 display_order 순으로 조회한다.

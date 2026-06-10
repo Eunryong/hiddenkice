@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { storageUrl } from "@/lib/supabase/storage";
+import { storageUrl } from "@/lib/supabase";
 import { formatPrice } from "../utils/formatPrice";
 import type { Textbook } from "../types/textbook";
 

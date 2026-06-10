@@ -123,7 +123,9 @@ Figma에는 배너가 정적인 이미지처럼 보이지만, 실제 서비스�
 src/
 ├── app/
 │   ├── layout.tsx
-│   └── page.tsx
+│   ├── page.tsx
+│   ├── icon.svg          # 파비콘 (App Router 파일 규칙)
+│   └── globals.css
 │
 ├── components/
 │   ├── layout/
@@ -131,34 +133,37 @@ src/
 │   │   └── Footer.tsx
 │   └── ui/
 │       ├── IconButton.tsx
+│       ├── Logo.tsx
 │       └── SearchInput.tsx
 │
 ├── features/
 │   └── textbooks/
+│       ├── index.ts          # 공개 API(배럴) — 외부는 이 파일로만 접근
 │       ├── api/
 │       │   ├── textbookApi.ts
-│       │   └── textbookBannerApi.ts
+│       │   └── bannerApi.ts
 │       ├── components/
-│       │   ├── TextbookMainBanner.tsx
+│       │   ├── MainBanner.tsx
 │       │   ├── TextbookSearch.tsx
 │       │   ├── TextbookCategoryFilter.tsx
 │       │   ├── TextbookGrid.tsx
 │       │   └── TextbookCard.tsx
 │       ├── hooks/
 │       │   ├── useTextbooks.ts
-│       │   └── useTextbookBanners.ts
+│       │   └── useBanners.ts
 │       ├── types/
-│       │   ├── textbook.ts
-│       │   └── textbookBanner.ts
+│       │   ├── textbook.ts        # 엔티티 타입은 DB 테이블명 기준(Textbook)
+│       │   └── banner.ts          # 엔티티 타입은 DB 테이블명 기준(Banner)
 │       └── utils/
 │           └── formatPrice.ts
 │
 ├── lib/
 │   └── supabase/
-│       └── client.ts
+│       ├── index.ts          # 공개 API(배럴)
+│       ├── client.ts
+│       └── storage.ts
 │
-└── styles/
-    └── globals.css
+└── (globals.css 는 app/ 에 위치)
 ```
 
 핵심 기준:
@@ -167,6 +172,8 @@ src/
 - 페이지 컴포넌트는 화면 조합만 담당합니다.
 - Supabase 조회 로직은 컴포넌트 내부에 직접 작성하지 않습니다.
 - 교재 관련 로직은 `features/textbooks`에 응집시킵니다.
+- **각 기능/인프라는 `index.ts` 배럴로 공개 API만 노출**합니다. 외부(app, 다른 기능)는 배럴을 통해서만 접근하고, 내부 구현(`TextbookCard`, `api/*`, `utils/*`)은 비공개로 둡니다. → 경계가 강제되어 내부 리팩터링이 자유롭습니다.
+- **엔티티 타입은 소유 기능이 가집니다.** `Textbook`/`Banner` 타입은 `features/textbooks`가 소유하고, 다른 기능(예: 향후 `cart`)은 이를 **import만**(단방향 의존) 합니다. 파일명은 DB 테이블명을 따르고(`textbook.ts`/`banner.ts`), 동작(컴포넌트·훅·api)에는 도메인 접두사를 둡니다(`TextbookGrid`, `useTextbooks`). 단, 도메인 폴더로 이미 네임스페이스가 명확한 경우 `MainBanner`처럼 접두사를 생략할 수 있습니다.
 
 ## 7. Tailwind CSS와 이미지 최적화
 

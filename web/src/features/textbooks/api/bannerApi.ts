@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase";
 import type { Banner } from "../types/banner";
 
 // 노출 대상 메인 배너를 display_order 순으로 조회한다.

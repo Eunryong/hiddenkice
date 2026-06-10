@@ -1,14 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import MainBanner from "@/features/textbooks/components/MainBanner";
-import TextbookSearch from "@/features/textbooks/components/TextbookSearch";
-import TextbookCategoryFilter, {
+import {
+  MainBanner,
+  TextbookSearch,
+  TextbookCategoryFilter,
   type TextbookCategory,
-} from "@/features/textbooks/components/TextbookCategoryFilter";
-import TextbookGrid from "@/features/textbooks/components/TextbookGrid";
-import { useBanners } from "@/features/textbooks/hooks/useBanners";
-import { useTextbooks } from "@/features/textbooks/hooks/useTextbooks";
+  TextbookGrid,
+  useTextbooks,
+  useBanners,
+} from "@/features/textbooks";
 
 // 교재 목록 페이지. 화면 조합만 담당하고 데이터는 hook을 통해 받는다.
 // 검색어/카테고리는 page가 소유하고, 조회된 교재에 적용해 그리드로 전달한다.
