@@ -387,7 +387,10 @@ Vercel 배포 환경에서도 동일한 환경 변수를 등록해야 CSR 조회
 
 ## 실행 방법
 
+Next.js 앱은 저장소 루트가 아니라 `web/` 하위 디렉터리에 있습니다. (설계 문서·이미지 원본은 루트에 두고, 앱 코드만 분리)
+
 ```bash
+cd web
 npm install
 npm run dev
 ```
@@ -398,16 +401,82 @@ npm run dev
 http://localhost:3000
 ```
 
+`web/.env.local`에 Supabase 환경 변수를 채워야 CSR 조회가 동작합니다. (`web/.env.local.example` 참고)
+
 ## 배포
 
 GitHub에 코드를 push하면 Vercel이 main 브랜치를 기준으로 자동 배포하도록 구성합니다.
 
-배포 시 Vercel Project Settings의 Environment Variables에 Supabase 환경 변수를 등록합니다.
+앱이 `web/` 하위에 있으므로 Vercel 프로젝트 설정에서 다음을 지정합니다.
+
+- **Root Directory**: `web`
+- **Node.js Version**: 22.x
+- **Environment Variables**:
 
 ```txt
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 ```
+
+## 구현하며 결정한 사항
+
+위 설계를 실제로 구현하면서 추가로 판단·결정한 내용을 정리합니다.
+
+### 저장소 구조 (web 서브디렉터리)
+
+설계 문서(`docs/`)와 이미지 원본(`image/`)은 루트에 두고, Next.js 앱은 `web/`에 분리했습니다. 한 저장소에서 문서/에셋과 앱 코드를 함께 관리하되 역할을 구분하기 위함이며, Vercel은 Root Directory를 `web`으로 지정해 그 하위만 빌드합니다.
+
+### Next.js 16 / Tailwind CSS 4
+
+Vercel이 Next.js를 직접 만드는 만큼 최신 안정 버전이 가장 잘 지원되어 Next 16을 사용합니다. (자세한 이유는 [기술 스택 > Next.js](#nextjs) 참고) Tailwind는 v4의 CSS-first 방식이라 `tailwind.config.js` 없이 `globals.css`의 `@theme`에서 브랜드 컬러·폰트 토큰을 정의했습니다.
+
+### 폰트 (Pretendard)
+
+Figma 시안의 본문 폰트가 Pretendard라 전역 폰트로 적용했습니다. Google Fonts에는 없어 CDN(variable, dynamic-subset)으로 불러오고, `--font-sans` 우선순위를 Pretendard로 두되 system-ui를 폴백으로 둡니다. 한글 비중이 큰 화면이라 dynamic-subset으로 용량을 줄였습니다.
+
+### 로고 (인라인 SVG 컴포넌트)
+
+로고는 글자 하나하나가 vector로 구성된 커스텀 워드마크라 웹폰트 텍스트로는 재현되지 않습니다. Figma에서 `LOGO` 프레임을 SVG 하나로 export한 뒤, `fill="currentColor"`로 바꿔 인라인 컴포넌트(`components/ui/Logo.tsx`)로 만들었습니다. 이렇게 하면 디자인과 픽셀 단위로 일치하고, 색상을 `text-brand`로 코드에서 제어할 수 있으며, 추가 네트워크 요청이 없습니다.
+
+### 이미지 (Supabase Storage public 버킷)
+
+교재 표지와 배너 이미지는 Supabase Storage의 **public 버킷(`image`)** 에 올리고, DB의 `image_url`(`image/...` = 버킷/경로)을 public URL로 조합하는 헬퍼(`lib/supabase/storage.ts`)를 두었습니다. 공개 카탈로그 이미지라 만료되는 서명 URL(private 버킷) 대신 public 버킷이 적합합니다. `next/image`로 최적화하기 위해 `next.config.ts`의 `remotePatterns`에 Supabase 호스트를 등록했고, 호스트는 환경 변수에서 추출해 프로젝트 ref를 하드코딩하지 않습니다.
+
+### RLS 읽기 정책
+
+테이블은 RLS를 켜 둔 채 **anon 역할에 대한 SELECT 정책(`using (true)`)만** 열었습니다. CSR에서 anon 키로 조회하므로 공개 읽기는 필요하지만, 쓰기 정책은 만들지 않아 클라이언트에서 수정은 불가능합니다. (RLS는 켜져 있는데 읽기 정책이 없으면 데이터가 있어도 0건으로 조회되는 점을 확인해 정책을 추가했습니다.)
+
+### 레이아웃 구조 (배너는 메인 프레임 밖)
+
+`Header` → `MainBanner` → `main`(콘텐츠 프레임) → `Footer`를 모두 최상위 형제로 배치했습니다. 배너는 화면 전체 폭(full-bleed)을 차지하는 영역이라 `max-width` 콘텐츠 프레임 안이 아니라 그 밖에 두고, 검색/필터/그리드만 `<main>` 콘텐츠 프레임(`max-w-[1280px]`)에 담습니다.
+
+### Figma 수치 반영 방식
+
+`1440` 고정 폭 시안을 그대로 복사하지 않고, 콘텐츠 폭(헤더 1280 / 푸터 1320 / 본문 1280)을 기준으로 재구성했습니다. 헤더는 로고+메뉴와 아이콘 그룹을 `flex` 비율(879:401)로 나눠 남는 여백이 그룹 내부에 들어가게 했고, 교재 목록은 고정 좌표 대신 반응형 Grid(`sm`2 → `md`3 → `lg`4열)로 만들어 화면 크기에 따라 배치되도록 했습니다.
+
+### 가격 표시 (데이터 기반)
+
+카드의 가격은 DB의 `price`를 기준 판매가로 그대로 쓰고, `original_price`/`discount_rate`는 표시용입니다. `discount_rate > 0`이면 정가(취소선) + 할인율 + 판매가를, 할인이 없으면 판매가만 보여주도록 데이터에 따라 분기합니다.
+
+### 검색 / 카테고리 필터 (상태 끌어올림)
+
+검색어와 선택 카테고리는 각 컴포넌트 내부가 아니라 페이지가 소유(controlled)하고, 조회된 교재 목록에 `useMemo`로 필터를 적용해 그리드에 전달합니다. 검색과 카테고리 조건이 서로 독립적으로 변하면서 함께 적용(AND)되도록 하기 위함입니다.
+
+- **검색**: 키 입력마다 필터링하면 화면이 매번 바뀌어 거슬리므로, 입력값은 로컬 `draft`로 두고 **엔터(폼 제출) 시에만** 커밋합니다.
+- **카테고리**: `전체` / `단품` / `패스` 선택 시 즉시 반영합니다.
+- 데이터가 12건 규모라 전체 조회 후 클라이언트에서 필터링했고, 데이터가 커지면 `useTextbooks`에 검색어·유형을 넘겨 Supabase 쿼리 조건(`ilike`/`eq`)으로 바꾸는 것이 확장 방향입니다.
+
+### 로딩 / 에러 / 빈 상태
+
+CSR 조회 특성상 상태를 분리해 처리합니다. 로딩 중, 조회 실패(에러), 데이터 자체가 없는 경우("표시할 교재가 없습니다"), 검색·필터 결과가 없는 경우("검색 결과가 없습니다")를 구분해 안내합니다.
+
+### 목록 표시 (페이지네이션 미적용)
+
+Figma 시안은 교재를 한 화면에 모두 노출하고 별도 페이지 컨트롤이 없어, 조회된 교재를 전부 그리드로 표시하는 방식으로 두었습니다. 데이터가 많아지면 `더보기`(증분 로드)나 번호 페이지네이션으로 확장할 수 있고, 그 시점에는 Supabase `range()` 기반 서버 페이지네이션으로 가는 것이 적합합니다.
+
+### 가격 더미 데이터 구성
+
+카드의 가격 분기(할인 유무)를 데이터로 모두 확인할 수 있도록, 더미 교재 중 일부는 할인이 있는 상품(정가·할인율·판매가), 일부는 할인이 없는 상품(`discount_rate = 0`, 판매가만)으로 섞어 구성했습니다.
 
 ## 구현 범위와 확장 범위
 

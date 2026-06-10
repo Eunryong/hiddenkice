@@ -1,7 +1,13 @@
 id,title,textbook_type,image_url,original_price,discount_rate,price,display_order,is_active,created_at
-1,2026 Hidden Kice 국어 독서 기본서,단품,image/textbooks/textbook1.webp,28000,10,25200,1,true,2026-06-10T00:00:00+09:00
-2,2026 Hidden Kice 국어 문학 기본서,단품,image/textbooks/textbook2.webp,28000,10,25200,2,true,2026-06-10T00:00:00+09:00
-3,2026 Hidden Kice 수학 공통 실전서,단품,image/textbooks/textbook1.webp,32000,15,27200,3,true,2026-06-10T00:00:00+09:00
-4,2026 Hidden Kice 영어 독해 유형서,단품,image/textbooks/textbook2.webp,26000,10,23400,4,true,2026-06-10T00:00:00+09:00
-5,Hidden Kice 국수영 실전 패스,패스,image/textbooks/textbook1.webp,86000,25,64500,5,true,2026-06-10T00:00:00+09:00
-6,Hidden Kice 전과목 프리미엄 패스,패스,image/textbooks/textbook2.webp,148000,30,103600,6,true,2026-06-10T00:00:00+09:00
+1,2026 Hidden Kice 시즌7,단품,image/textbooks/textbook1.webp,28000,10,25200,1,true,2026-06-10T00:00:00+09:00
+2,2026 Hidden Kice 시즌7,단품,image/textbooks/textbook2.webp,28000,0,28000,2,true,2026-06-10T00:00:00+09:00
+3,2026 Hidden Kice 시즌7,단품,image/textbooks/textbook1.webp,32000,15,27200,3,true,2026-06-10T00:00:00+09:00
+4,2026 Hidden Kice 시즌7,단품,image/textbooks/textbook2.webp,26000,10,23400,4,true,2026-06-10T00:00:00+09:00
+5,2026 Hidden Kice 시즌7,패스,image/textbooks/textbook1.webp,86000,25,64500,5,true,2026-06-10T00:00:00+09:00
+6,2026 Hidden Kice 시즌7,패스,image/textbooks/textbook2.webp,148000,30,103600,6,true,2026-06-10T00:00:00+09:00
+7,2026 Hidden Kice 시즌7,단품,image/textbooks/textbook1.webp,34000,15,28900,7,true,2026-06-10T00:00:00+09:00
+8,2026 Hidden Kice 시즌7,단품,image/textbooks/textbook2.webp,22000,0,22000,8,true,2026-06-10T00:00:00+09:00
+9,2026 Hidden Kice 시즌7,단품,image/textbooks/textbook1.webp,24000,0,24000,9,true,2026-06-10T00:00:00+09:00
+10,2026 Hidden Kice 시즌7,단품,image/textbooks/textbook2.webp,30000,15,25500,10,true,2026-06-10T00:00:00+09:00
+11,2026 Hidden Kice 시즌7,패스,image/textbooks/textbook1.webp,64000,20,51200,11,true,2026-06-10T00:00:00+09:00
+12,2026 Hidden Kice 시즌7,패스,image/textbooks/textbook2.webp,120000,30,84000,12,true,2026-06-10T00:00:00+09:00
